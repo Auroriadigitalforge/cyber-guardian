@@ -70,7 +70,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_report_by_number: {
+        Args: { p_report_number: string }
+        Returns: {
+          assigned_department: string
+          country_code: string
+          country_name: string
+          created_at: string
+          id: string
+          incident_description: string
+          platform_analyzed: string
+          report_number: string
+          scam_type: string
+          status: Database["public"]["Enums"]["report_status"]
+          updated_at: string
+        }[]
+      }
     }
     Enums: {
       report_status:
