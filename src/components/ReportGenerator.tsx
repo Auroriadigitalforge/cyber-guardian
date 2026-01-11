@@ -1,25 +1,23 @@
 import { CountryInfo, scamTypes } from "@/data/cyberData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Send, Copy, CheckCircle, Shield, AlertTriangle, Clock, MapPin, Loader2 } from "lucide-react";
+import { FileText, Download, Send, Copy, CheckCircle, Shield, AlertTriangle, Clock, MapPin, User } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useReports, Report } from "@/hooks/useReports";
 
 interface ReportGeneratorProps {
   country: CountryInfo;
   scamType: string;
   description: string;
-  onSendReport: (report: Report) => void;
+  onSendReport: () => void;
 }
 
 export function ReportGenerator({ country, scamType, description, onSendReport }: ReportGeneratorProps) {
   const [isCopied, setIsCopied] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { createReport } = useReports();
   
   const scam = scamTypes.find(s => s.id === scamType);
+  const reportId = `CS-${Date.now().toString(36).toUpperCase()}`;
   const reportDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -30,6 +28,7 @@ export function ReportGenerator({ country, scamType, description, onSendReport }
 
   const reportContent = `
 CYBERSHIELD INCIDENT REPORT
+Report ID: ${reportId}
 Generated: ${reportDate}
 
 ═══════════════════════════════════════
@@ -83,32 +82,12 @@ For emergencies, call your local cyber crime hotline immediately.
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  const handleSubmitReport = async () => {
-    setIsSubmitting(true);
-    
-    const report = await createReport({
-      countryCode: country.code,
-      countryName: country.name,
-      scamType: scamType,
-      incidentDescription: description,
-      platformAnalyzed: scam?.label,
-      aiAnalysis: `AI Analysis completed. Detected ${scam?.label} pattern. Risk level: HIGH.`,
-      assignedDepartment: country.cyberCrimeUnit,
-    });
-
-    setIsSubmitting(false);
-
-    if (report) {
-      onSendReport(report);
-    }
-  };
-
   const handleDownload = () => {
     const blob = new Blob([reportContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `CyberShield-Report-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = `CyberShield-Report-${reportId}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -132,7 +111,7 @@ For emergencies, call your local cyber crime hotline immediately.
               </div>
               <div>
                 <CardTitle className="text-xl">Incident Report Generated</CardTitle>
-                <p className="text-sm text-muted-foreground">Ready to submit to authorities</p>
+                <p className="text-sm text-muted-foreground">Report ID: {reportId}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-warning/20 text-warning text-sm font-medium">
@@ -181,9 +160,9 @@ For emergencies, call your local cyber crime hotline immediately.
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="glow" className="flex-1" onClick={handleSubmitReport} disabled={isSubmitting}>
-              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              {isSubmitting ? "Submitting..." : `Send to ${country.cyberCrimeUnit.split(' ')[0]}`}
+            <Button variant="glow" className="flex-1" onClick={onSendReport}>
+              <Send className="w-4 h-4" />
+              Send to {country.cyberCrimeUnit.split(' ')[0]}
             </Button>
             <Button variant="cyber" onClick={handleCopy}>
               {isCopied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}

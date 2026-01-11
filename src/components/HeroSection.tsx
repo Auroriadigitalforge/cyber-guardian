@@ -1,12 +1,11 @@
-import { Shield, Zap, Globe, Phone, FileText, Clock, Search } from "lucide-react";
+import { Shield, Zap, Globe, Phone, FileText, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeroSectionProps {
   onStartReport: () => void;
-  onTrackReport?: () => void;
 }
 
-export function HeroSection({ onStartReport, onTrackReport }: HeroSectionProps) {
+export function HeroSection({ onStartReport }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero cyber-grid">
       {/* Animated background elements */}
@@ -41,7 +40,7 @@ export function HeroSection({ onStartReport, onTrackReport }: HeroSectionProps) 
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6 fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 fade-in" style={{ animationDelay: '0.4s' }}>
             <Button variant="glow" size="xl" onClick={onStartReport}>
               <Zap className="w-5 h-5" />
               Report a Scam Now
@@ -51,16 +50,6 @@ export function HeroSection({ onStartReport, onTrackReport }: HeroSectionProps) 
               Emergency Hotlines
             </Button>
           </div>
-
-          {/* Track Report Button */}
-          {onTrackReport && (
-            <div className="mb-16 fade-in" style={{ animationDelay: '0.45s' }}>
-              <Button variant="outline" size="lg" onClick={onTrackReport}>
-                <Search className="w-4 h-4" />
-                Track Existing Report
-              </Button>
-            </div>
-          )}
 
           {/* Feature Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in" style={{ animationDelay: '0.5s' }}>

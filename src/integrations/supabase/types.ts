@@ -14,86 +14,16 @@ export type Database = {
   }
   public: {
     Tables: {
-      reports: {
-        Row: {
-          ai_analysis: string | null
-          assigned_department: string | null
-          country_code: string
-          country_name: string
-          created_at: string
-          id: string
-          incident_description: string
-          investigator_notes: string | null
-          platform_analyzed: string | null
-          report_number: string
-          scam_type: string
-          status: Database["public"]["Enums"]["report_status"]
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          ai_analysis?: string | null
-          assigned_department?: string | null
-          country_code: string
-          country_name: string
-          created_at?: string
-          id?: string
-          incident_description: string
-          investigator_notes?: string | null
-          platform_analyzed?: string | null
-          report_number: string
-          scam_type: string
-          status?: Database["public"]["Enums"]["report_status"]
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          ai_analysis?: string | null
-          assigned_department?: string | null
-          country_code?: string
-          country_name?: string
-          created_at?: string
-          id?: string
-          incident_description?: string
-          investigator_notes?: string | null
-          platform_analyzed?: string | null
-          report_number?: string
-          scam_type?: string
-          status?: Database["public"]["Enums"]["report_status"]
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_report_by_number: {
-        Args: { p_report_number: string }
-        Returns: {
-          assigned_department: string
-          country_code: string
-          country_name: string
-          created_at: string
-          id: string
-          incident_description: string
-          platform_analyzed: string
-          report_number: string
-          scam_type: string
-          status: Database["public"]["Enums"]["report_status"]
-          updated_at: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
-      report_status:
-        | "pending"
-        | "under_review"
-        | "investigating"
-        | "resolved"
-        | "closed"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -220,14 +150,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      report_status: [
-        "pending",
-        "under_review",
-        "investigating",
-        "resolved",
-        "closed",
-      ],
-    },
+    Enums: {},
   },
 } as const

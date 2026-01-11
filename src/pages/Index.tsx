@@ -2,34 +2,28 @@ import { useState, useCallback } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { CountrySelector } from "@/components/CountrySelector";
 import { ScamTypeSelector } from "@/components/ScamTypeSelector";
+import { ChatInterface } from "@/components/ChatInterface";
 import { ScanningAnimation } from "@/components/ScanningAnimation";
 import { ReportGenerator } from "@/components/ReportGenerator";
-import { ReportTracker } from "@/components/ReportTracker";
 import { CountryInfo, scamTypes } from "@/data/cyberData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight, Shield, AlertTriangle, CheckCircle, Search, Copy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Shield, AlertTriangle, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet-async";
-import { Report } from "@/hooks/useReports";
 
-type Step = "hero" | "country" | "scamType" | "describe" | "scanning" | "report" | "success" | "track";
+type Step = "hero" | "country" | "scamType" | "describe" | "scanning" | "report" | "success";
 
 const Index = () => {
   const [step, setStep] = useState<Step>("hero");
   const [selectedCountry, setSelectedCountry] = useState<CountryInfo | null>(null);
   const [selectedScamType, setSelectedScamType] = useState<string | null>(null);
   const [description, setDescription] = useState("");
-  const [submittedReport, setSubmittedReport] = useState<Report | null>(null);
   const { toast } = useToast();
 
   const handleStartReport = () => {
     setStep("country");
-  };
-
-  const handleTrackReport = () => {
-    setStep("track");
   };
 
   const handleCountrySelect = (country: CountryInfo) => {
@@ -44,12 +38,11 @@ const Index = () => {
     setStep("report");
   }, []);
 
-  const handleSendReport = (report: Report) => {
-    setSubmittedReport(report);
+  const handleSendReport = () => {
     setStep("success");
     toast({
       title: "Report Submitted Successfully",
-      description: `Your report ${report.report_number} has been sent to ${selectedCountry?.cyberCrimeUnit}.`,
+      description: `Your report has been sent to ${selectedCountry?.cyberCrimeUnit}. They will contact you soon.`,
     });
   };
 
@@ -58,17 +51,6 @@ const Index = () => {
     setSelectedCountry(null);
     setSelectedScamType(null);
     setDescription("");
-    setSubmittedReport(null);
-  };
-
-  const handleCopyReportNumber = async () => {
-    if (submittedReport) {
-      await navigator.clipboard.writeText(submittedReport.report_number);
-      toast({
-        title: "Copied!",
-        description: "Report number copied to clipboard",
-      });
-    }
   };
 
   const scamLabel = scamTypes.find(s => s.id === selectedScamType)?.label || "Platform";
@@ -90,24 +72,10 @@ const Index = () => {
         />
 
         {/* Hero Section */}
-        {step === "hero" && (
-          <HeroSection 
-            onStartReport={handleStartReport} 
-            onTrackReport={handleTrackReport}
-          />
-        )}
-
-        {/* Track Report Flow */}
-        {step === "track" && (
-          <div className="min-h-screen gradient-hero cyber-grid py-12 px-4">
-            <div className="container max-w-3xl mx-auto">
-              <ReportTracker onClose={() => setStep("hero")} />
-            </div>
-          </div>
-        )}
+        {step === "hero" && <HeroSection onStartReport={handleStartReport} />}
 
         {/* Report Flow Steps */}
-        {step !== "hero" && step !== "scanning" && step !== "success" && step !== "track" && (
+        {step !== "hero" && step !== "scanning" && step !== "success" && (
           <div className="min-h-screen gradient-hero cyber-grid py-12 px-4">
             <div className="container max-w-3xl mx-auto">
               {/* Progress Indicator */}
@@ -255,7 +223,7 @@ const Index = () => {
         )}
 
         {/* Success State */}
-        {step === "success" && submittedReport && (
+        {step === "success" && (
           <div className="min-h-screen gradient-hero cyber-grid flex items-center justify-center p-4">
             <Card variant="glow" className="max-w-lg w-full text-center fade-in">
               <CardContent className="p-8">
@@ -268,23 +236,11 @@ const Index = () => {
                   They will review your case and may contact you for additional information.
                 </p>
                 <div className="p-4 rounded-lg bg-secondary/50 mb-6">
-                  <p className="text-sm text-muted-foreground mb-1">Your Report Number</p>
-                  <div className="flex items-center justify-center gap-2">
-                    <p className="font-mono text-lg text-primary">{submittedReport.report_number}</p>
-                    <Button variant="ghost" size="sm" onClick={handleCopyReportNumber}>
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Save this number to track your report status
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-1">Reference Number</p>
+                  <p className="font-mono text-lg text-primary">CS-{Date.now().toString(36).toUpperCase()}</p>
                 </div>
                 <div className="space-y-3">
-                  <Button variant="glow" className="w-full" onClick={handleTrackReport}>
-                    <Search className="w-4 h-4 mr-2" />
-                    Track Report Status
-                  </Button>
-                  <Button variant="outline" className="w-full" onClick={handleNewReport}>
+                  <Button variant="glow" className="w-full" onClick={handleNewReport}>
                     Report Another Incident
                   </Button>
                   <Button variant="outline" className="w-full" asChild>
