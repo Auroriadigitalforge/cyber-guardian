@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useReports, Report, ReportStatus } from "@/hooks/useReports";
+import { useReports, PublicReport, ReportStatus } from "@/hooks/useReports";
 import { Search, FileText, Clock, Shield, MapPin, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
 import { scamTypes } from "@/data/cyberData";
 
@@ -12,7 +12,7 @@ interface ReportTrackerProps {
 
 export function ReportTracker({ onClose }: ReportTrackerProps) {
   const [reportNumber, setReportNumber] = useState("");
-  const [report, setReport] = useState<Report | null>(null);
+  const [report, setReport] = useState<PublicReport | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const { getReportByNumber, getStatusLabel, getStatusColor, isLoading, error } = useReports();
 
@@ -192,13 +192,6 @@ export function ReportTracker({ onClose }: ReportTrackerProps) {
                   </div>
                 )}
 
-                {/* Investigator Notes */}
-                {report.investigator_notes && (
-                  <div className="p-4 rounded-lg bg-secondary/50">
-                    <h4 className="text-sm font-medium mb-2">Latest Update</h4>
-                    <p className="text-sm text-muted-foreground">{report.investigator_notes}</p>
-                  </div>
-                )}
 
                 {/* Incident Description */}
                 <div className="p-4 rounded-lg bg-background border border-border">

@@ -4,21 +4,26 @@ import { useToast } from "@/hooks/use-toast";
 
 export type ReportStatus = "pending" | "under_review" | "investigating" | "resolved" | "closed";
 
-export interface Report {
+// Public report interface (excludes sensitive fields like ai_analysis, investigator_notes)
+export interface PublicReport {
   id: string;
   report_number: string;
-  user_id: string | null;
   country_code: string;
   country_name: string;
   scam_type: string;
   incident_description: string;
   platform_analyzed: string | null;
-  ai_analysis: string | null;
   status: ReportStatus;
   assigned_department: string | null;
-  investigator_notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// Full report interface (for internal/admin use only)
+export interface Report extends PublicReport {
+  user_id: string | null;
+  ai_analysis: string | null;
+  investigator_notes: string | null;
 }
 
 interface CreateReportData {
@@ -82,27 +87,25 @@ export function useReports() {
     }
   };
 
-  const getReportByNumber = async (reportNumber: string): Promise<Report | null> => {
+  // Use secure RPC function that excludes sensitive columns
+  const getReportByNumber = async (reportNumber: string): Promise<PublicReport | null> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data: report, error: fetchError } = await supabase
-        .from("reports" as any)
-        .select("*")
-        .eq("report_number", reportNumber)
-        .maybeSingle();
+      const { data: reports, error: fetchError } = await supabase
+        .rpc("get_report_by_number", { p_report_number: reportNumber });
 
       if (fetchError) {
         throw fetchError;
       }
 
-      if (!report) {
+      if (!reports || reports.length === 0) {
         setError("Report not found");
         return null;
       }
 
-      return report as unknown as Report;
+      return reports[0] as PublicReport;
     } catch (err: any) {
       const message = err.message || "Failed to fetch report";
       setError(message);
