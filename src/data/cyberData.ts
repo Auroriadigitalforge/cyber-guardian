@@ -116,7 +116,8 @@ export const countries: CountryInfo[] = [
     cyberCrimeUnit: "UAE Cybersecurity Council",
     website: "https://www.tra.gov.ae",
     email: "aecert@tra.gov.ae"
-  }
+  },
+  
 ];
 
 export const scamTypes = [
